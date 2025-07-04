@@ -221,7 +221,7 @@ class AutoMegapixelReducer:
             "required": {
                 "images": ("IMAGE",),
                 "max_megapixels": ("FLOAT", {
-                    "default": 2.0,
+                    "default": 2.1,
                     "min": 0.1,
                     "max": 50.0,
                     "step": 0.1,

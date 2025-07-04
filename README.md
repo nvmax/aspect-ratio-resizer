@@ -63,7 +63,7 @@ Automatically reduces high-resolution images to a target megapixel count.
 ### Auto Megapixel Reducer - Inputs
 
 - **images**: Input image(s) to resize
-- **max_megapixels**: Target maximum megapixels (default: 2.0, range: 0.1-50.0)
+- **max_megapixels**: Target maximum megapixels (default: 2.1, range: 0.1-50.0)
 - **only_reduce**: Enable/disable upscaling protection (default: True)
   - `True`: Only reduce size, never upscale (safe mode)
   - `False`: Allow upscaling if image is below target megapixels
