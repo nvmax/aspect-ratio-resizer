@@ -1,5 +1,7 @@
 import torch
 import torch.nn.functional as F
+import numpy as np
+from PIL import Image
 try:
     from server import PromptServer
 except ImportError:
@@ -14,7 +16,7 @@ class AspectRatioResizer:
     to fit within those constraints while preserving the original aspect ratio.
     """
 
-    CATEGORY = "image/resize"
+    CATEGORY = "nvmaxx/image/resize"
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -48,7 +50,7 @@ class AspectRatioResizer:
                 "resize_mode": (["downscale_only", "upscale_only", "both"], {
                     "default": "downscale_only"
                 }),
-                "interpolation": (["nearest", "linear", "bilinear", "bicubic", "trilinear", "area"], {
+                "interpolation": (["nearest", "linear", "bilinear", "bicubic", "trilinear", "area", "lanczos"], {
                     "default": "bilinear"
                 }),
             }
@@ -131,12 +133,21 @@ class AspectRatioResizer:
                 new_height = max(2, new_height - (new_height % 2))
                 
                 # Resize the image
-                resized_image = F.interpolate(
-                    image, 
-                    size=(new_height, new_width), 
-                    mode=interpolation,
-                    align_corners=False if interpolation in ['linear', 'bilinear', 'bicubic', 'trilinear'] else None
-                )
+                if interpolation == "lanczos":
+                    # [1, C, H, W] -> [H, W, C]
+                    img_np = image[0].permute(1, 2, 0).cpu().numpy()
+                    img_pil = Image.fromarray(np.clip(img_np * 255.0, 0, 255).astype(np.uint8))
+                    img_pil = img_pil.resize((new_width, new_height), resample=Image.Resampling.LANCZOS)
+                    # [H, W, C] -> [1, C, H, W]
+                    img_np = np.array(img_pil).astype(np.float32) / 255.0
+                    resized_image = torch.from_numpy(img_np).permute(2, 0, 1).unsqueeze(0).to(image.device)
+                else:
+                    resized_image = F.interpolate(
+                        image, 
+                        size=(new_height, new_width), 
+                        mode=interpolation,
+                        align_corners=False if interpolation in ['linear', 'bilinear', 'bicubic', 'trilinear'] else None
+                    )
                 
                 # Determine which constraint was used
                 constraint_used = []
@@ -213,7 +224,7 @@ class AutoMegapixelReducer:
     Perfect for handling very large images like 4K, 8K, etc.
     """
 
-    CATEGORY = "image/resize"
+    CATEGORY = "nvmaxx/image/resize"
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -232,7 +243,7 @@ class AutoMegapixelReducer:
                     "label_on": "Only Reduce (Safe)",
                     "label_off": "Allow Upscale"
                 }),
-                "interpolation": (["nearest", "linear", "bilinear", "bicubic", "trilinear", "area"], {
+                "interpolation": (["nearest", "linear", "bilinear", "bicubic", "trilinear", "area", "lanczos"], {
                     "default": "bilinear"
                 }),
             }
@@ -315,12 +326,21 @@ class AutoMegapixelReducer:
             actual_megapixels = (new_width * new_height) / 1_000_000
 
             # Resize the image
-            resized_image = F.interpolate(
-                image,
-                size=(new_height, new_width),
-                mode=interpolation,
-                align_corners=False if interpolation in ['linear', 'bilinear', 'bicubic', 'trilinear'] else None
-            )
+            if interpolation == "lanczos":
+                # [1, C, H, W] -> [H, W, C]
+                img_np = image[0].permute(1, 2, 0).cpu().numpy()
+                img_pil = Image.fromarray(np.clip(img_np * 255.0, 0, 255).astype(np.uint8))
+                img_pil = img_pil.resize((new_width, new_height), resample=Image.Resampling.LANCZOS)
+                # [H, W, C] -> [1, C, H, W]
+                img_np = np.array(img_pil).astype(np.float32) / 255.0
+                resized_image = torch.from_numpy(img_np).permute(2, 0, 1).unsqueeze(0).to(image.device)
+            else:
+                resized_image = F.interpolate(
+                    image,
+                    size=(new_height, new_width),
+                    mode=interpolation,
+                    align_corners=False if interpolation in ['linear', 'bilinear', 'bicubic', 'trilinear'] else None
+                )
 
             resize_info.append({
                 "original": f"{original_width}x{original_height}",
@@ -361,6 +381,6 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "AspectRatioResizer": "Aspect Ratio Resizer",
-    "AutoMegapixelReducer": "Auto Megapixel Reducer",
+    "AspectRatioResizer": "Aspect Ratio Resizer (nvmaxx)",
+    "AutoMegapixelReducer": "Auto Megapixel Reducer (nvmaxx)",
 }
