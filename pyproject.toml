@@ -1,7 +1,7 @@
 [project]
 name = "aspect-ratio-resizer"
 description = "A ComfyUI custom node that resizes images while maintaining aspect ratio."
-version = "1.1.0"
+version = "1.1.1"
 authors = [
     { name = "nvmaxx" }
 ]

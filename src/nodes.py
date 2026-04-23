@@ -56,8 +56,8 @@ class AspectRatioResizer:
             }
         }
     
-    RETURN_TYPES = ("IMAGE",)
-    RETURN_NAMES = ("resized_images",)
+    RETURN_TYPES = ("IMAGE", "INT", "INT")
+    RETURN_NAMES = ("resized_images", "width", "height")
     FUNCTION = "resize_images"
     
     def resize_images(self, images, max_width, max_height, enable_width, enable_height, resize_mode, interpolation):
@@ -76,7 +76,7 @@ class AspectRatioResizer:
         Returns:
             Tuple containing the resized images
         """
-        batch_size, original_height, original_width, channels = images.shape
+        batch_size, original_height, original_width, channels = images.shape; new_width, new_height = original_width, original_height
         
         # Convert to the format expected by torch.nn.functional.interpolate [B, C, H, W]
         images_tensor = images.permute(0, 3, 1, 2)
@@ -214,7 +214,7 @@ class AspectRatioResizer:
             except Exception as e:
                 print(f"AspectRatioResizer: Could not send frontend message: {e}")
         
-        return (result_tensor,)
+        return (result_tensor, new_width, new_height)
 
 
 class AutoMegapixelReducer:
@@ -249,8 +249,8 @@ class AutoMegapixelReducer:
             }
         }
 
-    RETURN_TYPES = ("IMAGE",)
-    RETURN_NAMES = ("resized_images",)
+    RETURN_TYPES = ("IMAGE", "INT", "INT")
+    RETURN_NAMES = ("resized_images", "width", "height")
     FUNCTION = "reduce_megapixels"
 
     def reduce_megapixels(self, images, max_megapixels, only_reduce, interpolation):
@@ -268,7 +268,7 @@ class AutoMegapixelReducer:
         """
         import math
 
-        batch_size, original_height, original_width, channels = images.shape
+        batch_size, original_height, original_width, channels = images.shape; new_width, new_height = original_width, original_height
 
         # Convert to the format expected by torch.nn.functional.interpolate [B, C, H, W]
         images_tensor = images.permute(0, 3, 1, 2)
@@ -371,7 +371,7 @@ class AutoMegapixelReducer:
             except Exception as e:
                 print(f"AutoMegapixelReducer: Could not send frontend message: {e}")
 
-        return (result_tensor,)
+        return (result_tensor, new_width, new_height)
 
 
 # Register the nodes
