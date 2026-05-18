@@ -7,9 +7,9 @@ if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
 try:
-    from .src.nodes import AspectRatioResizer, AutoMegapixelReducer
+    from .src.nodes import AspectRatioResizer, AutoMegapixelReducer  # pyrefly: ignore[missing-import] # type: ignore
 except ImportError:
-    from src.nodes import AspectRatioResizer, AutoMegapixelReducer
+    from src.nodes import AspectRatioResizer, AutoMegapixelReducer  # pyrefly: ignore[missing-import] # type: ignore
 
 NODE_CLASS_MAPPINGS = {
     "AspectRatioResizer": AspectRatioResizer,
