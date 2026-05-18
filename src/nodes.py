@@ -76,7 +76,8 @@ class AspectRatioResizer:
         Returns:
             Tuple containing the resized images
         """
-        batch_size, original_height, original_width, channels = images.shape; new_width, new_height = original_width, original_height
+        batch_size, original_height, original_width, channels = images.shape
+        new_width, new_height = original_width, original_height
         
         # Convert to the format expected by torch.nn.functional.interpolate [B, C, H, W]
         images_tensor = images.permute(0, 3, 1, 2)
@@ -268,7 +269,8 @@ class AutoMegapixelReducer:
         """
         import math
 
-        batch_size, original_height, original_width, channels = images.shape; new_width, new_height = original_width, original_height
+        batch_size, original_height, original_width, channels = images.shape
+        new_width, new_height = original_width, original_height
 
         # Convert to the format expected by torch.nn.functional.interpolate [B, C, H, W]
         images_tensor = images.permute(0, 3, 1, 2)
