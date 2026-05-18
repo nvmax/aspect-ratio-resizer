@@ -3,7 +3,7 @@ import torch.nn.functional as F
 import numpy as np
 from PIL import Image
 try:
-    from server import PromptServer
+    from server import PromptServer  # pyrefly: ignore[missing-import] # type: ignore
 except ImportError:
     # Fallback if server import fails
     PromptServer = None

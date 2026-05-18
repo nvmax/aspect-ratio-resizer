@@ -1,7 +1,7 @@
 [project]
 name = "aspect-ratio-resizer"
 description = "A ComfyUI custom node that resizes images while maintaining aspect ratio."
-version = "1.1.3"
+version = "1.1.4"
 authors = [
     { name = "nvmaxx" }
 ]
@@ -16,3 +16,6 @@ Repository = "https://github.com/nvmax/aspect-ratio-resizer"
 PublisherId = "nvmaxx"
 DisplayName = "Aspect Ratio Resizer"
 Icon = ""
+
+[tool.pyrefly]
+ignore-missing-imports = ["server"]
