@@ -7,9 +7,9 @@ if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
 try:
-    from .src.nodes import AspectRatioResizer, AutoMegapixelReducer  # pyrefly: ignore[missing-import] # type: ignore
+    from .src.nodes import AspectRatioResizer, AutoMegapixelReducer # type: ignore
 except ImportError:
-    from src.nodes import AspectRatioResizer, AutoMegapixelReducer  # pyrefly: ignore[missing-import] # type: ignore
+    from src.nodes import AspectRatioResizer, AutoMegapixelReducer # type: ignore
 
 NODE_CLASS_MAPPINGS = {
     "AspectRatioResizer": AspectRatioResizer,
@@ -21,6 +21,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "AutoMegapixelReducer": "Auto Megapixel Reducer (nvmaxx)",
 }
 
-WEB_DIRECTORY = "./web/js"
+# FIX: Removed the leading "./" which breaks registry path parsers
+WEB_DIRECTORY = "web/js"
 
 __all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS', 'WEB_DIRECTORY']
