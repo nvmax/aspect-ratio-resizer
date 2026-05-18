@@ -7,11 +7,19 @@ if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
 try:
-    # Try relative import first (works in ComfyUI)
-    from .src.nodes import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS
+    from .src.nodes import AspectRatioResizer, AutoMegapixelReducer
 except ImportError:
-    # Fallback to absolute import (works for testing)
-    from src.nodes import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS
+    from src.nodes import AspectRatioResizer, AutoMegapixelReducer
+
+NODE_CLASS_MAPPINGS = {
+    "AspectRatioResizer": AspectRatioResizer,
+    "AutoMegapixelReducer": AutoMegapixelReducer,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "AspectRatioResizer": "Aspect Ratio Resizer (nvmaxx)",
+    "AutoMegapixelReducer": "Auto Megapixel Reducer (nvmaxx)",
+}
 
 WEB_DIRECTORY = "./web/js"
 
